@@ -1,0 +1,13 @@
+{
+    "name": "madmikeyb/neutron",
+    "description": "Lightweight PHP Framework",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Mikey",
+            "email": "me@mikeylicio.us"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
