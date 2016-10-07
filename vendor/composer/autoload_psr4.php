@@ -6,4 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Neutron\\' => array($baseDir . '/core'),
+    'App\\' => array($baseDir . '/app'),
 );
