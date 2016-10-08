@@ -1,6 +1,8 @@
 <?php
 namespace Neutron;
 
+use PDO;
+
 class Database {
 
 	/**
@@ -39,8 +41,8 @@ class Database {
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES   => FALSE,
             );
-            $config = 'mysql:host='.getenv('dbhost').';dbname='.getenv('dbname').';charset='.getenv('dbchar');
-            self::$instance = new PDO($config, getenv('dbuser'), getenv('dbpass'), $args);
+            $config = 'mysql:host='.getenv('DB_HOST').';dbname='.getenv('DB_NAME').';charset='.getenv('DB_CHAR');
+            self::$instance = new PDO($config, getenv('DB_USER'), getenv('DB_PASS'), $args);
         }
         return self::$instance;
     }
