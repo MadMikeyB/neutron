@@ -11,11 +11,8 @@ class HomeController
 {
     public function index()
     {
-        $time = new \DateTime('now');
 		$users = User::all();
-
-		print_r($users); exit;
-        return View::get('home', ['time' => $time->format('H:i:s'), 'users' => $users]);
+        return View::get('home', ['users' => $users]);
     }
 
     public function example()

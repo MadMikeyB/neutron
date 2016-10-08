@@ -48,7 +48,34 @@ abstract class Model {
      */
 	public static function first()
 	{
-		return DB::query('SELECT FIRST(' . static::$key . ') FROM '. static::$table );
+		return DB::query('SELECT * FROM ' . static::$table . ' ORDER BY ' . static::$key . ' ASC LIMIT 1');
+	}
+
+    /**
+     * Retreive last record from the table
+     *
+     * @return array 
+     */
+	public static function last()
+	{
+		return DB::query('SELECT * FROM ' . static::$table . ' ORDER BY ' . static::$key . ' DESC LIMIT 1');
+	}
+
+    /**
+     * Retreive last record from the table
+     *
+     * @return array 
+     */
+	public static function find($id)
+	{
+		if ( is_array( $id ) )
+		{
+			// return new Collection();
+		}
+		else
+		{
+			return DB::query('SELECT * FROM ' . static::$table . ' WHERE ' . static::$key . ' = '. $id );
+		}
 	}
 
 }

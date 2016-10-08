@@ -1,4 +1,4 @@
-<h1>The time is currently <?php echo $time; ?></h1>
+<h1>All Users</h1>
 
 <?php foreach ( $users as $user ): ?>
 	<li><?php echo $user['username'] ?></li>
