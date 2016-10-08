@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Controllers;
+namespace app\Controllers;
 
 use Neutron\View;
-use Neutron\Database as DB;
-
 use App\Models\User;
 
 class HomeController
 {
     public function index()
     {
-		$users = User::all();
+        $users = User::all();
+
         return View::get('home', ['users' => $users]);
     }
 

@@ -4,78 +4,77 @@ namespace Neutron;
 
 use Neutron\Database as DB;
 
-abstract class Model {
-
-	/**
-	 * Check if class already has an instance
-	 * @var null
-	 */
+abstract class Model
+{
+    /**
+     * Check if class already has an instance.
+     *
+     * @var null
+     */
     protected static $instance = null;
 
     /**
-	 * Database Table to use
-	 * @var string
-	 */
-	protected static $table = null;
-    
-    /**
-	 * Primary Key
-	 * @var string
-	 */
-	protected static $key = 'id';
-
-    /**
-     * constructor
-     * 
-     * @return  null
-     */
-	public function __construct() {}
-
-    /**
-     * Retreive all records from the table
+     * Database Table to use.
      *
-     * @return array 
+     * @var string
      */
-	public static function all()
-	{
-		return DB::query('SELECT * FROM '. static::$table);
-	}
+    protected static $table = null;
 
     /**
-     * Retreive first record from the table
+     * Primary Key.
      *
-     * @return array 
+     * @var string
      */
-	public static function first()
-	{
-		return DB::query('SELECT * FROM ' . static::$table . ' ORDER BY ' . static::$key . ' ASC LIMIT 1');
-	}
+    protected static $key = 'id';
 
     /**
-     * Retreive last record from the table
-     *
-     * @return array 
+     * constructor.
      */
-	public static function last()
-	{
-		return DB::query('SELECT * FROM ' . static::$table . ' ORDER BY ' . static::$key . ' DESC LIMIT 1');
-	}
+    public function __construct()
+    {
+    }
 
     /**
-     * Retreive last record from the table
+     * Retreive all records from the table.
      *
-     * @return array 
+     * @return array
      */
-	public static function find($id)
-	{
-		if ( is_array( $id ) )
-		{
-			// return new Collection();
-		}
-		else
-		{
-			return DB::query('SELECT * FROM ' . static::$table . ' WHERE ' . static::$key . ' = '. $id );
-		}
-	}
+    public static function all()
+    {
+        return DB::query('SELECT * FROM '.static::$table);
+    }
 
+    /**
+     * Retreive first record from the table.
+     *
+     * @return array
+     */
+    public static function first()
+    {
+        return DB::query('SELECT * FROM '.static::$table.' ORDER BY '.static::$key.' ASC LIMIT 1');
+    }
+
+    /**
+     * Retreive last record from the table.
+     *
+     * @return array
+     */
+    public static function last()
+    {
+        return DB::query('SELECT * FROM '.static::$table.' ORDER BY '.static::$key.' DESC LIMIT 1');
+    }
+
+    /**
+     * Retreive last record from the table.
+     *
+     * @return array
+     */
+    public static function find($id)
+    {
+        if (is_array($id)) {
+            // return new Collection();
+        } else {
+            return DB::query('SELECT * FROM '.static::$table.' WHERE '.static::$key.' = '.$id);
+        }
+    }
 }
