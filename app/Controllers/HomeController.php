@@ -1,19 +1,20 @@
 <?php
-namespace App\Controllers;
+
+namespace app\Controllers;
 
 use Neutron\View;
 
-class HomeController {
+class HomeController
+{
+    public function index()
+    {
+        $time = new \DateTime('now');
 
-	public function index()
-	{
-		$time = new \DateTime('now');
-		return View::get('home', ['time' => $time->format('H:i:s')]);
-	}
+        return View::get('home', ['time' => $time->format('H:i:s')]);
+    }
 
-	public function example()
-	{
-		echo "<h1>Example</h1>";
-	}
-
+    public function example()
+    {
+        echo '<h1>Example</h1>';
+    }
 }
