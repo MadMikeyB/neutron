@@ -2,3 +2,4 @@
 vendor/
 .couscous/
 couscous.yml
+.DS_Store
