@@ -13,9 +13,9 @@ if (getenv('APP_DEBUG') == true) {
 
 // Set up our Paths
 define('BASE_DIR', __DIR__.'/');
-define('APP_DIR', BASE_DIR.'/app');
-define('CORE_DIR', BASE_DIR.'/core');
-define('VIEW_PATH', APP_DIR.'/views');
+define('APP_DIR', BASE_DIR.'app/');
+define('CORE_DIR', BASE_DIR.'core/');
+define('VIEW_DIR', APP_DIR.'views/');
 
 // Boot up our Router and handle requests
 Neutron\Router::load(__DIR__.'/app/routes.php')->route(Neutron\Request::uri());

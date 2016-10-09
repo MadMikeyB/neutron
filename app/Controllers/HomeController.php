@@ -3,9 +3,11 @@
 namespace app\Controllers;
 
 use Neutron\View;
+use Neutron\Controller;
+
 use App\Models\User;
 
-class HomeController
+class HomeController extends Controller
 {
     public function index()
     {
