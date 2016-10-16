@@ -10,7 +10,8 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "vlucas/phpdotenv": "^2.4"
+        "vlucas/phpdotenv": "^2.4",
+        "league/booboo": "^1.0"
     },
     "autoload": {
         "psr-4": {

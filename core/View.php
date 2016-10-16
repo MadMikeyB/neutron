@@ -2,14 +2,15 @@
 
 namespace Neutron;
 
+use \Exception;
+
 class View
 {
     public static function get($name, $data = [])
     {
-        extract($data);
         $tpl = '';
         $tpl .= static::getHeader();
-        $tpl .= require VIEW_DIR.$name.'.tpl.php';
+        $tpl .= static::getTemplate($name, $data);
         $tpl .= static::getFooter();
 
         return $tpl;
@@ -18,6 +19,19 @@ class View
     public static function getTitle()
     {
         echo getenv('APP_TITLE');
+    }
+
+    public static function getTemplate($name, $data = [])
+    {
+    	if ( file_exists(VIEW_DIR . $name . '.tpl.php') )
+    	{
+	        extract($data);
+    		return require VIEW_DIR . $name . '.tpl.php';
+    	}
+    	else
+    	{
+    		throw new Exception($name . '.tpl.php not found');
+    	}
     }
 
     public static function getHeader()

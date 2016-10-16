@@ -17,6 +17,6 @@ class HomeController extends Controller
 
     public function example()
     {
-        echo '<h1>Example</h1>';
+        return View::get('example');
     }
 }

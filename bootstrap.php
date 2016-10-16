@@ -11,6 +11,12 @@ if (getenv('APP_DEBUG') == true) {
     ini_set('display_errors', 'On');
 }
 
+// Bootstrap our Error Handler
+$runner = new League\BooBoo\Runner();
+$runner->pushFormatter(new League\BooBoo\Formatter\HtmlTableFormatter());
+$runner->register();
+
+
 // Set up our Paths
 define('BASE_DIR', __DIR__.'/');
 define('APP_DIR', BASE_DIR.'app/');
