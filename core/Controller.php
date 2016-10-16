@@ -2,7 +2,6 @@
 
 namespace Neutron;
 
-class Controller 
+class Controller
 {
-
 }

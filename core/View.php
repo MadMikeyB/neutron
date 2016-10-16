@@ -11,6 +11,7 @@ class View
         $tpl .= static::getHeader();
         $tpl .= require VIEW_DIR.$name.'.tpl.php';
         $tpl .= static::getFooter();
+
         return $tpl;
     }
 

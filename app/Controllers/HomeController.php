@@ -4,7 +4,6 @@ namespace app\Controllers;
 
 use Neutron\View;
 use Neutron\Controller;
-
 use App\Models\User;
 
 class HomeController extends Controller
