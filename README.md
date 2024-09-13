@@ -97,6 +97,8 @@ Example:
 
 namespace Neutron\Controller;
 
+use Psr\Http\Message\ResponseInterface;
+
 class HomeController extends BaseController
 {
     public function index(): ResponseInterface
