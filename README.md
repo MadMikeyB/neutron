@@ -97,9 +97,6 @@ Example:
 
 namespace Neutron\Controller;
 
-use Laminas\Diactoros\Response\HtmlResponse;
-use Psr\Http\Message\ResponseInterface;
-
 class HomeController extends BaseController
 {
     public function index(): ResponseInterface
