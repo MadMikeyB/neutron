@@ -18,11 +18,10 @@ class HomeController extends BaseController
      *
      * @return ResponseInterface The HTTP response containing the rendered home page.
      */
-    public function index(ServerRequestInterface $request): ResponseInterface
+    public function index(ServerRequestInterface $request): string|ResponseInterface
     {
         $this->log(self::LOG_LEVEL_DEBUG, 'Home page accessed');
         
-        $content = $this->render('home.twig', ['name' => 'Mikey']);
-        return new HtmlResponse($content);
+        return $this->view('home.twig', ['name' => 'Mikey']);
     }
 }

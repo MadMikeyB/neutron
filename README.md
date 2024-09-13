@@ -105,8 +105,7 @@ class HomeController extends BaseController
     public function index(): ResponseInterface
     {
         $this->log('info', 'Home page accessed');
-        $content = $this->render('home.twig', ['name' => 'Neutron Framework']);
-        return new HtmlResponse($content);
+        return $this->view('home.twig', ['name' => 'Mikey']);
     }
 }
 ```

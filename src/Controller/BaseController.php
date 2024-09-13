@@ -2,6 +2,8 @@
 
 namespace Neutron\Controller;
 
+use Laminas\Diactoros\Response\HtmlResponse;
+use Psr\Http\Message\ResponseInterface;
 use Twig\Environment;
 use Psr\Log\LoggerInterface;
 
@@ -40,6 +42,20 @@ class BaseController
     protected function render(string $template, array $data = []): string
     {
         return $this->twig->render($template, $data);
+    }
+
+    /**
+     * Render a HTML Response.
+     *
+     * @param string $template The name of the Twig template.
+     * @param array $data Data to pass to the template.
+     *
+     * @return string The rendered template as a string.
+     */
+    protected function view(string $template, array $data = []): ResponseInterface
+    {
+        $content = $this->render($template, $data);
+        return new HtmlResponse($content);
     }
 
     /**
