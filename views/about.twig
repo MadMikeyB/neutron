@@ -1,0 +1,11 @@
+{% extends "layouts/main.twig" %}
+
+{% block title %}About - {{ parent() }}{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <h1>{{ block('title') }}</h1>
+{% endblock %}

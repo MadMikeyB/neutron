@@ -1,0 +1,46 @@
+# Composer dependencies
+/vendor/
+/composer.lock
+
+# Environment variables
+/.env
+
+# Cache, logs, and temp files
+/logs/*
+!logs/.gitkeep   # Keep the logs directory but ignore the contents
+
+/tmp/
+/cache/
+
+# IDE and editor files
+/.vscode/
+/.idea/
+/nbproject/
+/*.swp
+/*.swo
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# PHPUnit and testing
+/phpunit.xml
+/phpunit.xml.dist
+/tests/_output/
+/coverage/
+
+# Other generated files
+/.phpunit.result.cache
+
+# Node modules (if using Node.js or any front-end build tools)
+/node_modules/
+
+# Symfony's var folder (if applicable)
+/var/*
+!var/.gitkeep
+
+# Composer autoload files (when running composer dump-autoload)
+/composer.phar
+
+# Ignore user-specific files like SFTP config
+*.sftp.json

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html class="h-full" lang="en">
+<head>
+    {% block meta %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% endblock %}
+
+    {% block head %}
+        <!-- Tailwind CSS CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <title>{% block title %}Neutron Framework{% endblock %}</title>
+    {% endblock %}
+</head>
+<body class="h-full">
+    {% block content %}
+        <!-- Main content area -->
+    {% endblock %}
+</body>
+</html>

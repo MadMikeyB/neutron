@@ -1,0 +1,19 @@
+{
+    "require": {
+        "vlucas/phpdotenv": "^5.4",
+        "symfony/var-dumper": "^5.0",
+        "filp/whoops": "^2.14",
+        "monolog/monolog": "^2.8",
+        "twig/twig": "^3.0",
+        "league/route": "^5.1",
+        "league/container": "^4.2",
+        "league/event": "^3.0",
+        "laminas/laminas-diactoros": "^2.17",
+        "laminas/laminas-httphandlerrunner": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neutron\\": "src/"
+        }
+    }
+}

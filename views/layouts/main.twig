@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block meta %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% endblock %}
+
+    {% block head %}
+        <!-- Tailwind CSS CDN -->
+        <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script>
+        <title>{% block title %}Neutron Framework{% endblock %}</title>
+    {% endblock %}
+</head>
+<body class="min-h-screen flex flex-col font-sans bg-gray-50 text-gray-800">
+    {% block header %}
+    <header class="bg-white shadow mb-8">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            {% block logo %}
+            <a href="#" class="text-2xl font-bold text-gray-800 hover:text-gray-600">
+                Neutron
+            </a>
+            {% endblock %}
+
+            {% block nav %}
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="/" class="text-gray-600 hover:text-blue-500">Home</a></li>
+                    <li><a href="/docs" class="text-gray-600 hover:text-blue-500">Get Started</a></li>
+                    <li><a href="https://github.com/madmikeyb/neutron" class="text-gray-600 hover:text-blue-500">Download</a></li>
+                </ul>
+            </nav>
+            {% endblock %}
+        </div>
+
+        {% block afternav %}
+        <!-- Additional content after the nav can go here -->
+        {% endblock %}
+    </header>
+    {% endblock %}
+
+    <main class="container mx-auto px-4 flex-grow">
+        {% block content %}
+        <div class="bg-white p-6 rounded-lg shadow">
+            <!-- Main content area -->
+        </div>
+        {% endblock %}
+    </main>
+
+    <footer class="bg-gray-900 text-white py-4">
+        <div class="container mx-auto px-4 text-center">
+            {% block footer %}
+            <p class="text-sm">&copy; {{ now|date('Y') }} - <a href="https://mikeylicio.us/" class="text-blue-400 hover:text-blue-300">Mikey Burton</a>.</p>
+            {% endblock %}
+        </div>
+    </footer>
+</body>
+</html>
