@@ -27,6 +27,7 @@ abstract class Model
     protected ?int $offset = null;
     protected ?string $orderBy = null;
     protected ?string $orderDirection = 'ASC';
+    protected array $internalProperties = ['internalProperties', 'queryType', 'conditions', 'limit', 'offset', 'orderBy', 'orderDirection'];
 
     /**
      * Initialize a new instance for chaining query building.
@@ -202,19 +203,25 @@ abstract class Model
     protected function insert(): void
     {
         $pdo = Connection::getPDO();
-        $columns = array_keys(get_object_vars($this));
+    
+        // Get only the model properties, excluding internal properties
+        $modelVars = array_diff_key(get_object_vars($this), array_flip($this->internalProperties));
+        $columns = array_keys($modelVars);
         $placeholders = array_map(fn($col) => ":$col", $columns);
-        $values = get_object_vars($this);
-
+    
+        // Prepare the SQL statement
         $sql = sprintf(
             "INSERT INTO %s (%s) VALUES (%s)",
             static::$table,
             implode(', ', $columns),
             implode(', ', $placeholders)
         );
-
+    
+        // Prepare and execute the statement
         $stmt = $pdo->prepare($sql);
-        $stmt->execute($values);
+        $stmt->execute($modelVars);
+    
+        // Set the primary key value after insert (for auto-incrementing keys)
         $this->{static::$primaryKey} = $pdo->lastInsertId();
     }
 
@@ -224,14 +231,19 @@ abstract class Model
     protected function update(): void
     {
         $pdo = Connection::getPDO();
-        $columns = array_keys(get_object_vars($this));
-        $placeholders = array_map(fn($col) => "$col = :$col", $columns);
-        $values = get_object_vars($this);
+
+        // Get only the model properties, excluding internal properties
+        $modelVars = array_diff_key(get_object_vars($this), array_flip($this->internalProperties));
 
         // Ensure the primary key is not updated
         $primaryKey = static::$primaryKey;
-        unset($values[$primaryKey]);
+        unset($modelVars[$primaryKey]);
 
+        // Prepare the columns for the SQL update statement
+        $columns = array_keys($modelVars);
+        $placeholders = array_map(fn($col) => "$col = :$col", $columns);
+
+        // Prepare the SQL statement
         $sql = sprintf(
             "UPDATE %s SET %s WHERE %s = :%s",
             static::$table,
@@ -240,11 +252,12 @@ abstract class Model
             $primaryKey
         );
 
-        // Bind the primary key value
-        $values[$primaryKey] = $this->{$primaryKey};
+        // Add the primary key value to the parameters
+        $modelVars[$primaryKey] = $this->{$primaryKey};
 
+        // Prepare and execute the statement
         $stmt = $pdo->prepare($sql);
-        $stmt->execute($values);
+        $stmt->execute($modelVars);
     }
 
     /**

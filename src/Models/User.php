@@ -40,4 +40,11 @@ class User extends Model
      * @var string
      */
     public string $password;
+
+    /**
+     * The role of the user.
+     *
+     * @var string
+     */
+    public string $role;
 }

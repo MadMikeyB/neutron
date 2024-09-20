@@ -8,8 +8,16 @@ use League\Container\Container;
 
 class Connection
 {
-    protected static PDO $pdo;
+    protected static ?PDO $pdo = null;
     protected static Container $container;
+
+    /**
+     * Manually set the PDO instance for testing or custom connections.
+     */
+    public static function setPDO(PDO $pdo): void
+    {
+        self::$pdo = $pdo;
+    }
 
     /**
      * Set the container (called during setup).
@@ -20,16 +28,13 @@ class Connection
     }
 
     /**
-     * Get the PDO connection.
-     *
-     * @return PDO
+     * Get the PDO instance. If none exists, create it based on environment variables.
      */
     public static function getPDO(): PDO
     {
-        if (!isset(self::$pdo)) {
+        if (!self::$pdo) {
             self::$pdo = self::makeConnection();
         }
-
         return self::$pdo;
     }
 

@@ -21,7 +21,7 @@ class HomeController extends BaseController
     public function index(ServerRequestInterface $request): string|ResponseInterface
     {
         $this->log(self::LOG_LEVEL_DEBUG, 'Home page accessed');
-
+        
         return $this->view('home.twig', ['name' => 'Mikey']);
     }
 }
