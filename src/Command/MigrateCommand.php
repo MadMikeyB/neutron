@@ -2,11 +2,10 @@
 
 namespace Neutron\Command;
 
-use PDO;
-use Neutron\Database\Connection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Neutron\Database\Connection;
 
 class MigrateCommand extends Command
 {
@@ -14,46 +13,85 @@ class MigrateCommand extends Command
 
     protected function configure(): void
     {
-        $this->setDescription('Run the database migrations.')
-             ->setHelp('This command applies all pending database migrations.');
+        $this->setDescription('Run database migrations.')
+             ->setHelp('This command allows you to run pending database migrations.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $pdo = Connection::getPDO();
-        $migrationPath = __DIR__ . '/../../migrations/';
-        $logFile = __DIR__ . '/../../logs/migrations.log';
 
-        // Create the logs directory if it doesn't exist
-        if (!is_dir(dirname($logFile))) {
-            mkdir(dirname($logFile), 0755, true);
-        }
+        // Ensure the migrations table exists
+        $this->ensureMigrationsTableExists($pdo);
 
-        // Open the log file for appending
-        $logHandle = fopen($logFile, 'a');
+        // Get all migration files
+        $migrationDir = __DIR__ . '/../../migrations';
+        $migrationFiles = glob($migrationDir . '/*.sql');
 
-        $migrations = glob($migrationPath . '*.sql');
-        foreach ($migrations as $migration) {
-            $sql = file_get_contents($migration);
+        // Fetch already run migrations from the migrations table
+        $runMigrations = $this->getRunMigrations($pdo);
 
-            // Execute the migration
-            try {
-                $pdo->exec($sql);
-                $message = 'Executed migration: ' . basename($migration);
-                $output->writeln($message);
+        // Run each migration if it hasn't been run yet
+        foreach ($migrationFiles as $file) {
+            $filename = basename($file);
 
-                // Log the migration execution
-                fwrite($logHandle, '[' . date('Y-m-d H:i:s') . "] " . $message . PHP_EOL);
-            } catch (\Exception $e) {
-                $output->writeln('<error>Error executing migration: ' . basename($migration) . '</error>');
-                fwrite($logHandle, '[' . date('Y-m-d H:i:s') . "] Error: " . $e->getMessage() . PHP_EOL);
-                fclose($logHandle);
-
-                return Command::FAILURE;
+            // Skip if the migration has already been run
+            if (in_array($filename, $runMigrations)) {
+                $output->writeln("<info>Skipping already applied migration: {$filename}</info>");
+                continue;
             }
+
+            // Run the migration
+            $output->writeln("<comment>Running migration: {$filename}</comment>");
+            $this->runMigration($pdo, $file);
+
+            // Record the migration as run
+            $this->recordMigration($pdo, $filename);
+            $output->writeln("<info>Migration applied: {$filename}</info>");
         }
 
-        fclose($logHandle);
         return Command::SUCCESS;
+    }
+
+    /**
+     * Ensure the migrations table exists in the database.
+     */
+    private function ensureMigrationsTableExists(\PDO $pdo): void
+    {
+        $sql = "
+            CREATE TABLE IF NOT EXISTS migrations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                migration VARCHAR(255) NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+        ";
+        $pdo->exec($sql);
+    }
+
+    /**
+     * Get the list of already run migrations.
+     */
+    private function getRunMigrations(\PDO $pdo): array
+    {
+        $stmt = $pdo->query("SELECT migration FROM migrations");
+        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * Run a migration by executing the SQL in the file.
+     */
+    private function runMigration(\PDO $pdo, string $file): void
+    {
+        $sql = file_get_contents($file);
+        $pdo->exec($sql);
+    }
+
+    /**
+     * Record a migration as being run.
+     */
+    private function recordMigration(\PDO $pdo, string $filename): void
+    {
+        $stmt = $pdo->prepare("INSERT INTO migrations (migration) VALUES (:migration)");
+        $stmt->execute(['migration' => $filename]);
     }
 }

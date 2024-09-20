@@ -11,6 +11,7 @@
 - **Error Handling**: Improved error pages with `filp/whoops`.
 - **Dumping**: Integrated debugging with Symfony’s `var-dumper`.
 - **Console**: Application Console using Symfony’s `console`.
+- **Models/Migrations/ORM**: Simple Model/Migration/ORM system using PDO and basic SQL files.
 
 ## Requirements
 
@@ -345,6 +346,146 @@ You can now run the command with an argument:
 ```bash
 php neutron greet Mikey
 ```
+
+## Generating Migrations
+
+You can generate migrations using the `generateMigration` command. Migrations are used to define changes to your database schema in a structured way. Optionally, you can also create a corresponding model for each migration.
+
+### Syntax:
+
+```bash
+php neutron generateMigration <migration_name> [-m]
+```
+
+- `<migration_name>`: The name of the migration you want to create. Example: `create_messages_table`
+- `-m`: (Optional) Use this flag to generate a corresponding model for the migration.
+
+### Example:
+
+```bash
+php neutron generateMigration create_messages_table -m
+```
+
+This command will create:
+- A migration file in the `migrations/` directory.
+- A model class `Message` in the `src/Models/` directory (if `-m` is passed).
+
+The migration file will look like this:
+
+```sql
+-- Migration: create_messages_table
+-- Generated at: 2023-09-24 12:00:00
+
+-- Write your SQL statements here
+```
+
+The model class will look like this:
+
+```php
+<?php
+
+namespace Neutron\Models;
+
+use Neutron\Database\Model;
+
+class Message extends Model
+{
+    protected static string $table = 'messages';
+}
+```
+
+---
+
+## Running Migrations
+
+Once you've generated migrations, you can run them using the `migrate` command. This will apply any new migrations to your database.
+
+### Syntax:
+
+```bash
+php neutron migrate
+```
+
+This command will:
+- Run all pending migrations in the `migrations/` directory.
+- Automatically create the database file if you're using SQLite and it doesn't already exist.
+
+Migrations are logged in `logs/migrations.log` for future reference.
+
+---
+
+## Using the ORM
+
+Neutron includes a lightweight ORM (Object-Relational Mapper) for interacting with your database. Each model represents a database table, and you can query the table using the model's static methods.
+
+### Basic Queries
+
+1. **Retrieve All Records**:
+
+   Use the `all()` method to retrieve all records from a table:
+
+   ```php
+   $messages = Message::all();
+   ```
+
+2. **Find One Record by ID**:
+
+   Use the `find($id)` method to retrieve a record by its primary key:
+
+   ```php
+   $message = Message::find(1);
+   ```
+
+3. **Filter Records with Conditions**:
+
+   Use the `where()` method to retrieve records that match specific conditions:
+
+   ```php
+   $messages = Message::where('status', '=', 'unread');
+   ```
+
+   You can also chain multiple conditions:
+
+   ```php
+   $messages = Message::where('status', '=', 'unread')
+                      ->where('priority', '=', 'high');
+   ```
+
+### Inserting Data
+
+To insert a new record, create an instance of the model and call the `save()` method:
+
+```php
+$message = new Message();
+$message->content = 'This is a new message';
+$message->status = 'unread';
+$message->save();
+```
+
+This will insert a new record into the `messages` table.
+
+### Updating Data
+
+To update an existing record, retrieve it using the `find()` method, modify the fields, and call `save()`:
+
+```php
+$message = Message::find(1);
+$message->status = 'read';
+$message->save();
+```
+
+This will update the `status` of the message with `id = 1`.
+
+### Deleting Data
+
+To delete a record, retrieve it using `find()` and call the `delete()` method:
+
+```php
+$message = Message::find(1);
+$message->delete();
+```
+
+This will delete the message with `id = 1` from the database.
 
 ### Debugging
 
