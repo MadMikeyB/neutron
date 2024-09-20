@@ -28,12 +28,19 @@
   - [Running Commands](#running-commands)
   - [Using Input Arguments and Options](#using-input-arguments-and-options)
 - [Generating Migrations](#generating-migrations)
+  - [Example](#example)
 - [Running Migrations](#running-migrations)
 - [Using the ORM](#using-the-orm)
-  - [Basic Queries](#basic-queries)
-  - [Inserting Data](#inserting-data)
-  - [Updating Data](#updating-data)
-  - [Deleting Data](#deleting-data)
+  - [Retrieving All Records](#retrieving-all-records)
+  - [Retrieving a Single Record](#retrieving-a-single-record)
+  - [Filtering Records with `where()`](#filtering-records-with-where)
+  - [Ordering Records with `orderBy()`](#ordering-records-with-orderby)
+  - [Limiting Results with `limit()` and `offset()`](#limiting-results-with-limit-and-offset)
+  - [Checking if a Record Exists with `exists()`](#checking-if-a-record-exists-with-exists)
+  - [Inserting a New Record](#inserting-a-new-record)
+  - [Updating an Existing Record](#updating-an-existing-record)
+  - [Deleting a Record](#deleting-a-record)
+  - [Building Queries without Executing Them (with `toSql()`)](#building-queries-without-executing-them-with-tosql)
 - [Debugging](#debugging)
 - [Environment Variables](#environment-variables)
 - [Contributing](#contributing)
@@ -480,82 +487,135 @@ Migrations are logged in `logs/migrations.log` for future reference.
 
 ## Using the ORM
 
-Neutron includes a lightweight ORM (Object-Relational Mapper) for interacting with your database. Each model represents a database table, and you can query the table using the model's static methods.
-
-### Basic Queries
-
-1. **Retrieve All Records**:
-
-   Use the `all()` method to retrieve all records from a table:
-
-   ```php
-   $messages = Message::all();
-   ```
-
-2. **Find One Record by ID**:
-
-   Use the `find($id)` method to retrieve a record by its primary key:
-
-   ```php
-   $message = Message::find(1);
-   ```
-
-3. **Filter Records with Conditions**:
-
-   Use the `where()` method to retrieve records that match specific conditions:
-
-   ```php
-   $messages = Message::where('status', '=', 'unread');
-   ```
-
-   You can also chain multiple conditions:
-
-   ```php
-   $messages = Message::where('status', '=', 'unread')
-                      ->where('priority', '=', 'high');
-   ```
+Neutron provides a simple, chainable ORM for interacting with your database. Below are some examples of how you can use the ORM to interact with your data models.
 
 ---
 
-### Inserting Data
+### **Retrieving All Records**
 
-To insert a new record, create an instance of the model and call the `save()` method:
-
-```php
-$message = new Message();
-$message->content = 'This is a new message';
-$message->status = 'unread';
-$message->save();
-```
-
-This will insert a new record into the `messages` table.
-
----
-
-### Updating Data
-
-To update an existing record, retrieve it using the `find()` method, modify the fields, and call `save()`:
+You can retrieve all records from a database table using the `all()` method.
 
 ```php
-$message = Message::find(1);
-$message->status = 'read';
-$message->save();
+// Get all users
+$users = User::all();
 ```
 
-This will update the `status` of the message with `id = 1`.
+### **Retrieving a Single Record**
 
----
-
-### Deleting Data
-
-To delete a record, retrieve it using `find()` and call the `delete()` method:
+You can retrieve a single record based on a condition using the `where()` method combined with `one()` or `get()`.
 
 ```php
-$message = Message::find(1);
-$message->delete();
+// Get a single user by email
+$user = User::where('email', 'email@example.com')->one();
 ```
 
-This will delete the message with `id = 1` from the database.
+Alternatively, you can use `find()` to retrieve a record by its primary key (e.g., `id`).
+
+```php
+// Find a user by ID
+$user = User::find(1);
+```
+
+### **Filtering Records with `where()`**
+
+You can filter records using the `where()` method and chain multiple conditions.
+
+```php
+// Get all users with a role of 'admin'
+$admins = User::where('role', 'admin')->all();
+
+// Get users where 'status' is 'active' and 'role' is 'admin'
+$activeAdmins = User::where('status', 'active')->where('role', 'admin')->all();
+```
+
+### **Ordering Records with `orderBy()`**
+
+You can order the results of a query using the `orderBy()` method.
+
+```php
+// Get all users ordered by 'created_at' in descending order
+$users = User::orderBy('created_at', 'DESC')->all();
+
+// Get users with role 'admin', ordered by 'email' in ascending order
+$admins = User::where('role', 'admin')->orderBy('email', 'ASC')->all();
+```
+
+### **Limiting Results with `limit()` and `offset()`**
+
+You can limit the number of results and skip a number of records using the `limit()` and `offset()` methods.
+
+```php
+// Get the first 5 users
+$users = User::limit(5)->all();
+
+// Get users 6 to 10 (with limit and offset)
+$users = User::limit(5)->offset(5)->all();
+```
+
+### **Checking if a Record Exists with `exists()`**
+
+You can check if a record exists by using the `exists()` method.
+
+```php
+// Check if a user with the specified email exists
+$exists = User::where('email', 'email@example.com')->exists();
+
+if ($exists) {
+    echo "User exists!";
+} else {
+    echo "User does not exist!";
+}
+```
+
+### **Inserting a New Record**
+
+You can create and insert a new record using the `save()` method.
+
+```php
+// Create a new user
+$user = new User();
+$user->email = 'newuser@example.com';
+$user->password = password_hash('secret123', PASSWORD_BCRYPT);
+$user->role = 'user';
+$user->save();
+```
+
+After calling `save()`, the new record will be inserted into the database, and the primary key (`id`) will be automatically set on the model.
+
+### **Updating an Existing Record**
+
+You can update an existing record by first retrieving it and then calling `save()`.
+
+```php
+// Find a user and update their role
+$user = User::find(1);
+$user->role = 'admin';
+$user->save();
+```
+
+The `save()` method will automatically update the record in the database if the model already has a primary key.
+
+### **Deleting a Record**
+
+You can delete a record from the database using the `delete()` method.
+
+```php
+// Find a user and delete them
+$user = User::find(1);
+$user->delete();
+```
+
+Once the `delete()` method is called, the record will be removed from the database, and the primary key will be unset from the model.
+
+### **Building Queries without Executing Them (with `toSql()`)**
+
+If you want to see the SQL query that would be executed without running it, you can use the `toSql()` method.
+
+```php
+// Generate the SQL query without executing it
+$sql = User::where('role', 'admin')->orderBy('created_at', 'DESC')->toSql();
+echo $sql;
+// Output: SELECT * FROM users WHERE role = :role ORDER BY created_at DESC
 
 ---
 
