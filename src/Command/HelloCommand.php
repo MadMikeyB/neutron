@@ -1,4 +1,5 @@
 <?php
+
 namespace Neutron\Command;
 
 use Symfony\Component\Console\Command\Command;
@@ -19,7 +20,7 @@ class HelloCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('Hello, World.');
-        
+
         // Your logic goes here...
 
         return Command::SUCCESS;

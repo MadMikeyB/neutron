@@ -8,17 +8,16 @@ use Twig\Environment;
 use League\Route\Router;
 use Psr\Log\LoggerInterface;
 use League\Container\Container;
+use Neutron\Database\Connection;
 use Twig\Loader\FilesystemLoader;
 use Monolog\Handler\StreamHandler;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\Console\Application;
+use League\Container\ReflectionContainer;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Response\HtmlResponse;
+use League\Route\Strategy\ApplicationStrategy;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use League\Route\Http\Exception\NotFoundException;
-use League\Container\ReflectionContainer;
-use Psr\Http\Message\ServerRequestInterface;
-use League\Route\Strategy\ApplicationStrategy;
 
 /**
  * Neutron framework core class.
@@ -35,10 +34,14 @@ class Neutron
     {
         $this->loadEnvironment();
         $this->container = new Container();
+        $this->setupEnvironmentVariables();
         $this->setupLogger();
         $this->setupTemplateEngine();
         $this->setupRouter();
         $this->setupErrorHandling();
+
+        // Set the container for the database connection
+        Connection::setContainer($this->container);
     }
 
     /**
@@ -69,11 +72,26 @@ class Neutron
     }
 
     /**
+     * Store environment variables in the container for later use.
+     */
+    protected function setupEnvironmentVariables(): void
+    {
+        $this->container->add('env', [
+            'db_connection' => getenv('DB_CONNECTION'),
+            'db_database'   => getenv('DB_DATABASE'),
+            'db_username'   => getenv('DB_USERNAME'),
+            'db_password'   => getenv('DB_PASSWORD'),
+            'log_channel'   => getenv('LOG_CHANNEL') ?: 'app',
+            'app_debug'     => getenv('APP_DEBUG') === 'true',
+        ]);
+    }
+
+    /**
      * Set up the logging system with Monolog.
      */
     protected function setupLogger(): void
     {
-        $logChannel = getenv('LOG_CHANNEL') ?: 'app';
+        $logChannel = $this->container->get('env')['log_channel'];
         $logger = new Logger($logChannel);
         $logger->pushHandler(new StreamHandler(__DIR__ . '/../logs/app.log', Logger::DEBUG));
 

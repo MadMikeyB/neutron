@@ -8,6 +8,8 @@
 # Cache, logs, and temp files
 /logs/*
 !logs/.gitkeep   # Keep the logs directory but ignore the contents
+/database/*
+!database/.gitkeep   # Keep the logs directory but ignore the contents
 
 /tmp/
 /cache/

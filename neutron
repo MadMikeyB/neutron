@@ -3,7 +3,11 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
+use Neutron\Neutron;
 use Neutron\Console\Application;
+
+// Instantiate Neutron, which sets up the container and environment
+$neutron = new Neutron();
 
 // Use the custom NeutronApplication class
 $application = new Application('Neutron Console', '1.0.0');
