@@ -63,7 +63,7 @@ class Connection
 
                 case 'sqlite':
                     self::ensureSqliteDatabaseExists($database);
-                    $dsn = "sqlite:{$database}";
+                    $dsn = "sqlite:" . __DIR__ . "/../../{$database}";
                     return new PDO($dsn, null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
                 default:

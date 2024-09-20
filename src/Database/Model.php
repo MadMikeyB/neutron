@@ -128,6 +128,24 @@ abstract class Model
     }
 
     /**
+     * Check if a record exists in the database based on a condition.
+     *
+     * @param string $column The column to check.
+     * @param mixed  $value  The value to check for in the column.
+     * @return bool          True if the record exists, false otherwise.
+     */
+    public static function exists(string $column, $value): bool
+    {
+        $pdo = Connection::getPDO();
+        $sql = sprintf("SELECT 1 FROM %s WHERE %s = :value LIMIT 1", static::$table, $column);
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['value' => $value]);
+
+        // Return true if a record is found, otherwise false
+        return (bool) $stmt->fetchColumn();
+    }
+
+    /**
      * Get all records from the table.
      */
     public static function all(): array
