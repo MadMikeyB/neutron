@@ -2,6 +2,46 @@
 
 **Neutron** is a lightweight PHP micro-framework built with a focus on simplicity, modularity, and flexibility. It leverages modern PHP libraries for routing, templating, and logging to create a clean and efficient development experience.
 
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Directory Structure](#directory-structure)
+- [Usage](#usage)
+  - [Running the Application](#running-the-application)
+  - [Routes](#routes)
+  - [Controllers](#controllers)
+  - [Handling Request Methods and Parameters](#handling-request-methods-and-parameters)
+    - [GET Parameters](#get-parameters)
+    - [POST Parameters](#post-parameters)
+    - [PUT and PATCH Requests](#put-and-patch-requests)
+    - [DELETE Requests](#delete-requests)
+  - [Templates](#templates)
+  - [Logging](#logging)
+- [Working with Console Commands](#working-with-console-commands)
+  - [Setting Up Console Commands](#setting-up-console-commands)
+  - [Auto-Loading Commands](#auto-loading-commands)
+  - [Registering a Command](#registering-a-command)
+  - [Running Commands](#running-commands)
+  - [Using Input Arguments and Options](#using-input-arguments-and-options)
+- [Generating Migrations](#generating-migrations)
+- [Running Migrations](#running-migrations)
+- [Using the ORM](#using-the-orm)
+  - [Basic Queries](#basic-queries)
+  - [Inserting Data](#inserting-data)
+  - [Updating Data](#updating-data)
+  - [Deleting Data](#deleting-data)
+- [Debugging](#debugging)
+- [Environment Variables](#environment-variables)
+- [Contributing](#contributing)
+- [License](#license)
+- [Future Improvements](#future-improvements)
+
+---
+
 ## Features
 
 - **Routing**: Configurable routing using `league/route`.
@@ -13,10 +53,14 @@
 - **Console**: Application Console using Symfony’s `console`.
 - **Models/Migrations/ORM**: Simple Model/Migration/ORM system using PDO and basic SQL files.
 
+---
+
 ## Requirements
 
 - **PHP 8.2+**
 - **Composer** (for dependency management)
+
+---
 
 ## Installation
 
@@ -54,22 +98,32 @@
    LOG_CHANNEL=app
    ```
 
+---
+
 ## Directory Structure
 
 ```
 /neutron
-    /public            # Publicly accessible files (index.php)
-    /src               # Application source code (controllers, core framework, routes)
-        /Controller    # Controllers for handling requests
-        /Command       # Commands for handling console requests
-        Neutron.php    # Core framework class
-        routes.php     # Router file
-        console.php    # Console router
-    /views             # Twig templates
-    /logs              # Log files (ignored by Git, but directory tracked)
-    .env               # Environment configuration
-    composer.json      # Composer dependencies
+├── composer.json       # Composer dependencies
+├── .env                # Environment configuration
+├── neutron             # Console Application entry-point
+├── database            # Database storage (SQLite, contents gitignored)
+├── logs                # Log files (ignored by Git, but directory tracked)
+├── migrations          # Database migrations
+├── public              # Publicly accessible files (index.php)
+├── src                 # Application source code (controllers, core framework, routes)
+│   ├── Command         # Commands for handling console requests
+│   ├── Console         # Console core application classes
+│   ├── Controller      # Controllers for handling requests
+│   ├── Database        # Database ORM classes
+│   ├── Models          # Models for interacting with the ORM
+│   ├── Neutron.php     # Core framework class
+│   ├── console.php     # Console Router
+│   └── routes.php      # HTTP Router
+└── views               # Twig templates
 ```
+
+---
 
 ## Usage
 
@@ -83,6 +137,8 @@ php -S localhost:8000 -t public
 
 Visit [http://localhost:8000](http://localhost:8000) in your browser to see the application running.
 
+---
+
 ### Routes
 
 Routes are defined in `src/routes.php`. Here is an example of how a route can be defined:
@@ -90,6 +146,8 @@ Routes are defined in `src/routes.php`. Here is an example of how a route can be
 ```php
 $router->map('GET', '/home', [HomeController::class, 'index']);
 ```
+
+---
 
 ### Controllers
 
@@ -114,6 +172,8 @@ class HomeController extends BaseController
 }
 ```
 
+---
+
 ## Handling Request Methods and Parameters
 
 ### GET Parameters
@@ -137,6 +197,8 @@ public function index(ServerRequestInterface $request): ResponseInterface
 
 If you visit `https://example.com/home?foo=bar`, the `$foo` variable will contain `"bar"`.
 
+---
+
 ### POST Parameters
 
 For POST requests (typically form submissions), use the `getParsedBody()` method. This method returns an associative array of all parameters sent in the body of the request.
@@ -158,6 +220,8 @@ public function create(ServerRequestInterface $request): ResponseInterface
 
 If a form submits a POST request to `https://example.com/create` with a field `foo` having the value `bar`, the `$foo` variable will contain `"bar"`.
 
+---
+
 ### PUT and PATCH Requests
 
 Both PUT and PATCH requests are used to update resources. You can retrieve the data from these methods using `getParsedBody()` just like with POST.
@@ -178,6 +242,8 @@ public function update(ServerRequestInterface $request): ResponseInterface
 ```
 
 A PUT request to `https://example.com/update/1` containing data like `foo=bar` will allow you to access the `foo` value via `$foo`.
+
+---
 
 ### DELETE Requests
 
@@ -204,21 +270,7 @@ For example, a DELETE request to `https://example.com/delete?id=1` would allow y
 
 ---
 
-### Does This Also Support PUT, PATCH, and DELETE Methods?
-
-Yes, the framework fully supports PUT, PATCH, and DELETE methods. These HTTP methods can be mapped to specific routes in your routing configuration, just like GET and POST. For example:
-
-```php
-// Mapping a PUT request to the 'update' method
-$router->map('PUT', '/update/{id}', [YourController::class, 'update']);
-
-// Mapping a DELETE request to the 'delete' method
-$router->map('DELETE', '/delete/{id}', [YourController::class, 'delete']);
-```
-
-In these cases, you can retrieve data from the request body (for PUT, PATCH) or query parameters (for DELETE) using the `getParsedBody()` or `getQueryParams()` methods.
-
-### Templates
+## Templates
 
 Twig templates are located in the `views` directory. Here's an example `home.twig` template:
 
@@ -234,7 +286,9 @@ Twig templates are located in the `views` directory. Here's an example `home.twi
 </html>
 ```
 
-### Logging
+---
+
+## Logging
 
 The framework uses Monolog for logging. Log files are written to the `logs/` directory. The logging level and destination can be configured via the `.env` file.
 
@@ -243,6 +297,8 @@ Example log entry:
 ```php
 $this->log('error', 'Something went wrong');
 ```
+
+---
 
 ## Working with Console Commands
 
@@ -306,6 +362,8 @@ To add a new command to your application, follow these steps:
    $application->add(new HelloCommand());
    ```
 
+---
+
 ### Running Commands
 
 Once the commands are defined and registered, you can run them using the `console.php` file in your project root:
@@ -315,6 +373,8 @@ php neutron hello
 ```
 
 This will execute the `HelloCommand` and print the message `"Hello, World."`.
+
+---
 
 ### Using Input Arguments and Options
 
@@ -347,6 +407,8 @@ You can now run the command with an argument:
 php neutron greet Mikey
 ```
 
+---
+
 ## Generating Migrations
 
 You can generate migrations using the `generateMigration` command. Migrations are used to define changes to your database schema in a structured way. Optionally, you can also create a corresponding model for each migration.
@@ -359,6 +421,8 @@ php neutron generateMigration <migration_name> [-m]
 
 - `<migration_name>`: The name of the migration you want to create. Example: `create_messages_table`
 - `-m`: (Optional) Use this flag to generate a corresponding model for the migration.
+
+---
 
 ### Example:
 
@@ -451,6 +515,8 @@ Neutron includes a lightweight ORM (Object-Relational Mapper) for interacting wi
                       ->where('priority', '=', 'high');
    ```
 
+---
+
 ### Inserting Data
 
 To insert a new record, create an instance of the model and call the `save()` method:
@@ -464,6 +530,8 @@ $message->save();
 
 This will insert a new record into the `messages` table.
 
+---
+
 ### Updating Data
 
 To update an existing record, retrieve it using the `find()` method, modify the fields, and call `save()`:
@@ -476,6 +544,8 @@ $message->save();
 
 This will update the `status` of the message with `id = 1`.
 
+---
+
 ### Deleting Data
 
 To delete a record, retrieve it using `find()` and call the `delete()` method:
@@ -487,17 +557,25 @@ $message->delete();
 
 This will delete the message with `id = 1` from the database.
 
-### Debugging
+---
+
+## Debugging
 
 Enable debugging by setting `APP_DEBUG=true` in your `.env` file. This will enable error pages with detailed stack traces, powered by `Whoops`.
 
-### Environment Variables
+---
+
+## Environment Variables
 
 Environment variables are managed using `phpdotenv`. You can define custom environment variables in your `.env` file.
+
+---
 
 ## Contributing
 
 Feel free to open an issue or submit a pull request if you find any bugs or want to add new features. Contributions are always welcome!
+
+---
 
 ## License
 
@@ -510,4 +588,3 @@ This project is licensed under the BSD 2-Clause "Simplified" License.
 - **Middleware Support**: Adding middleware for request and response handling.
 - **Session Management**: Integrating session handling for stateful applications.
 - **Advanced Error Handling**: Configurable error handling for production environments.
-
