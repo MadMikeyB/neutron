@@ -46,3 +46,4 @@ Thumbs.db
 
 # Ignore user-specific files like SFTP config
 *.sftp.json
+.php-cs-fixer.cache
