@@ -11,6 +11,7 @@ use League\Container\Container;
 use Twig\Loader\FilesystemLoader;
 use Monolog\Handler\StreamHandler;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Console\Application;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
