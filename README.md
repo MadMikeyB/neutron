@@ -616,6 +616,7 @@ If you want to see the SQL query that would be executed without running it, you 
 $sql = User::where('role', 'admin')->orderBy('created_at', 'DESC')->toSql();
 echo $sql;
 // Output: SELECT * FROM users WHERE role = :role ORDER BY created_at DESC
+```
 
 ---
 
