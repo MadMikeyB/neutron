@@ -43,12 +43,20 @@ abstract class Model
      * Filter records with a where condition.
      *
      * @param string $column   The column to filter by.
-     * @param string $operator The operator for the filter (e.g., '=', '>', '<').
-     * @param mixed  $value    The value to filter with.
+     * @param mixed  $operatorOrValue Either the operator (if 3 arguments) or the value (if 2 arguments).
+     * @param mixed  $value    The value to filter with (optional).
      * @return static
      */
-    public function where(string $column, string $operator, $value): static
+    public function where(string $column, $operatorOrValue, $value = null): static
     {
+        // If only two arguments are passed, assume "=" as the operator
+        if ($value === null) {
+            $value = $operatorOrValue;
+            $operator = '=';
+        } else {
+            $operator = $operatorOrValue;
+        }
+
         $this->conditions[] = [$column, $operator, $value];
         return $this;
     }
@@ -125,7 +133,7 @@ abstract class Model
         // Build the WHERE clause
         $sql = sprintf("SELECT * FROM %s", static::$table);
         if (!empty($this->conditions)) {
-            $sql .= " WHERE " . implode(' AND ', array_map(fn($cond) => "$cond[0] $cond[1] :{$cond[0]}", $this->conditions));
+            $sql .= " WHERE " . implode(' AND ', array_map(fn ($cond) => "$cond[0] $cond[1] :{$cond[0]}", $this->conditions));
         }
 
         // Add ORDER BY clause if specified
@@ -164,7 +172,7 @@ abstract class Model
         // Build the WHERE clause
         $sql = sprintf("SELECT 1 FROM %s", static::$table);
         if (!empty($this->conditions)) {
-            $sql .= " WHERE " . implode(' AND ', array_map(fn($cond) => "$cond[0] $cond[1] :{$cond[0]}", $this->conditions));
+            $sql .= " WHERE " . implode(' AND ', array_map(fn ($cond) => "$cond[0] $cond[1] :{$cond[0]}", $this->conditions));
         }
 
         $sql .= " LIMIT 1";
@@ -203,12 +211,12 @@ abstract class Model
     protected function insert(): void
     {
         $pdo = Connection::getPDO();
-    
+
         // Get only the model properties, excluding internal properties
         $modelVars = array_diff_key(get_object_vars($this), array_flip($this->internalProperties));
         $columns = array_keys($modelVars);
-        $placeholders = array_map(fn($col) => ":$col", $columns);
-    
+        $placeholders = array_map(fn ($col) => ":$col", $columns);
+
         // Prepare the SQL statement
         $sql = sprintf(
             "INSERT INTO %s (%s) VALUES (%s)",
@@ -216,11 +224,11 @@ abstract class Model
             implode(', ', $columns),
             implode(', ', $placeholders)
         );
-    
+
         // Prepare and execute the statement
         $stmt = $pdo->prepare($sql);
         $stmt->execute($modelVars);
-    
+
         // Set the primary key value after insert (for auto-incrementing keys)
         $this->{static::$primaryKey} = $pdo->lastInsertId();
     }
@@ -241,7 +249,7 @@ abstract class Model
 
         // Prepare the columns for the SQL update statement
         $columns = array_keys($modelVars);
-        $placeholders = array_map(fn($col) => "$col = :$col", $columns);
+        $placeholders = array_map(fn ($col) => "$col = :$col", $columns);
 
         // Prepare the SQL statement
         $sql = sprintf(
@@ -335,7 +343,7 @@ abstract class Model
             default:
                 $sql = sprintf("SELECT * FROM %s", static::$table);
                 if (!empty($this->conditions)) {
-                    $sql .= " WHERE " . implode(' AND ', array_map(fn($cond) => "$cond[0] $cond[1] :{$cond[0]}", $this->conditions));
+                    $sql .= " WHERE " . implode(' AND ', array_map(fn ($cond) => "$cond[0] $cond[1] :{$cond[0]}", $this->conditions));
                 }
 
                 if ($this->orderBy !== null) {

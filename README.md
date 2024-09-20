@@ -497,7 +497,7 @@ You can retrieve all records from a database table using the `all()` method.
 
 ```php
 // Get all users
-$users = User::all();
+$users = User::query()->all();
 ```
 
 ### **Retrieving a Single Record**
@@ -506,14 +506,14 @@ You can retrieve a single record based on a condition using the `where()` method
 
 ```php
 // Get a single user by email
-$user = User::where('email', 'email@example.com')->one();
+$user = User::query()->where('email', 'email@example.com')->one();
 ```
 
 Alternatively, you can use `find()` to retrieve a record by its primary key (e.g., `id`).
 
 ```php
 // Find a user by ID
-$user = User::find(1);
+$user = User::query()->find(1);
 ```
 
 ### **Filtering Records with `where()`**
@@ -522,10 +522,20 @@ You can filter records using the `where()` method and chain multiple conditions.
 
 ```php
 // Get all users with a role of 'admin'
-$admins = User::where('role', 'admin')->all();
+$admins = User::query()->where('role', 'admin')->all();
 
 // Get users where 'status' is 'active' and 'role' is 'admin'
-$activeAdmins = User::where('status', 'active')->where('role', 'admin')->all();
+$activeAdmins = User::query()->where('status', 'active')->where('role', 'admin')->all();
+```
+
+You can also use operators with the where query. The default, if one is not passed, is '='. An example of a "between" query is below:
+
+```php
+// Get all users who signed up between Jan 1st 2024 and Jan 31st 2024
+$users = User::query()
+    ->where('created_at', '>=', '2024-01-01')
+    ->where('created_at', '<=', '2024-01-31')
+    ->all();
 ```
 
 ### **Ordering Records with `orderBy()`**
@@ -534,10 +544,10 @@ You can order the results of a query using the `orderBy()` method.
 
 ```php
 // Get all users ordered by 'created_at' in descending order
-$users = User::orderBy('created_at', 'DESC')->all();
+$users = User::query()->orderBy('created_at', 'DESC')->all();
 
 // Get users with role 'admin', ordered by 'email' in ascending order
-$admins = User::where('role', 'admin')->orderBy('email', 'ASC')->all();
+$admins = User::query()->where('role', 'admin')->orderBy('email', 'ASC')->all();
 ```
 
 ### **Limiting Results with `limit()` and `offset()`**
@@ -546,10 +556,10 @@ You can limit the number of results and skip a number of records using the `limi
 
 ```php
 // Get the first 5 users
-$users = User::limit(5)->all();
+$users = User::query()->limit(5)->all();
 
 // Get users 6 to 10 (with limit and offset)
-$users = User::limit(5)->offset(5)->all();
+$users = User::query()->limit(5)->offset(5)->all();
 ```
 
 ### **Checking if a Record Exists with `exists()`**
@@ -558,7 +568,7 @@ You can check if a record exists by using the `exists()` method.
 
 ```php
 // Check if a user with the specified email exists
-$exists = User::where('email', 'email@example.com')->exists();
+$exists = User::query()->where('email', 'email@example.com')->exists();
 
 if ($exists) {
     echo "User exists!";
@@ -588,7 +598,7 @@ You can update an existing record by first retrieving it and then calling `save(
 
 ```php
 // Find a user and update their role
-$user = User::find(1);
+$user = User::query()->find(1);
 $user->role = 'admin';
 $user->save();
 ```
@@ -601,7 +611,7 @@ You can delete a record from the database using the `delete()` method.
 
 ```php
 // Find a user and delete them
-$user = User::find(1);
+$user = User::query()->find(1);
 $user->delete();
 ```
 
@@ -613,7 +623,7 @@ If you want to see the SQL query that would be executed without running it, you 
 
 ```php
 // Generate the SQL query without executing it
-$sql = User::where('role', 'admin')->orderBy('created_at', 'DESC')->toSql();
+$sql = User::query()->where('role', 'admin')->orderBy('created_at', 'DESC')->toSql();
 echo $sql;
 // Output: SELECT * FROM users WHERE role = :role ORDER BY created_at DESC
 ```

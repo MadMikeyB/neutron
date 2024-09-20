@@ -102,6 +102,37 @@ class UserTest extends TestCase
         $this->assertEquals('user1@example.com', $admins[0]->email);
     }
 
+    public function testWhereMethod(): void
+    {
+        // Insert multiple users for testing
+        $user1 = new User();
+        $user1->email = 'admin@example.com';
+        $user1->password = password_hash('password1', PASSWORD_BCRYPT);
+        $user1->role = 'admin';
+        $user1->save();
+
+        $user2 = new User();
+        $user2->email = 'user@example.com';
+        $user2->password = password_hash('password2', PASSWORD_BCRYPT);
+        $user2->role = 'user';
+        $user2->save();
+
+        // Test with no operator (default to =)
+        $admins = User::query()->where('role', 'admin')->get();
+        $this->assertCount(1, $admins);
+        $this->assertEquals('admin@example.com', $admins[0]->email);
+
+        // Test with "=" operator
+        $admins = User::query()->where('role', '=', 'admin')->get();
+        $this->assertCount(1, $admins);
+        $this->assertEquals('admin@example.com', $admins[0]->email);
+
+        // Test with a custom operator "!="
+        $nonAdmins = User::query()->where('role', '!=', 'admin')->get();
+        $this->assertCount(1, $nonAdmins);
+        $this->assertEquals('user@example.com', $nonAdmins[0]->email);
+    }
+
     public function testLimitAndOffset(): void
     {
         // Insert multiple users
