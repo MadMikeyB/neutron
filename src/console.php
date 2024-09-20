@@ -10,6 +10,6 @@ use Neutron\Command\HelloCommand;
  */
 
 // Register the HelloCommand
-$application->add(new HelloCommand());
+// $application->add(new HelloCommand());
 
 // Add more commands here as needed

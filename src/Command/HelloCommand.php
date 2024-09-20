@@ -11,8 +11,9 @@ class HelloCommand extends Command
 
     protected function configure(): void
     {
-        $this->setDescription('Hello Command.')
-             ->setHelp('This is an example command.');
+        $this->setName(self::$defaultName)
+            ->setDescription('Hello Command.')
+            ->setHelp('This is an example command.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

@@ -10,6 +10,7 @@
 - **Environment Variables**: Manage environment configuration using `vlucas/phpdotenv`.
 - **Error Handling**: Improved error pages with `filp/whoops`.
 - **Dumping**: Integrated debugging with Symfony’s `var-dumper`.
+- **Console**: Application Console using Symfony’s `console`.
 
 ## Requirements
 
@@ -59,7 +60,10 @@
     /public            # Publicly accessible files (index.php)
     /src               # Application source code (controllers, core framework, routes)
         /Controller    # Controllers for handling requests
+        /Command       # Commands for handling console requests
         Neutron.php    # Core framework class
+        routes.php     # Router file
+        console.php    # Console router
     /views             # Twig templates
     /logs              # Log files (ignored by Git, but directory tracked)
     .env               # Environment configuration
@@ -237,6 +241,109 @@ Example log entry:
 
 ```php
 $this->log('error', 'Something went wrong');
+```
+
+## Working with Console Commands
+
+Neutron supports command-line operations using Symfony Console, which allows you to create and run CLI commands easily.
+
+### Setting Up Console Commands
+
+Neutron provides a `console.php` file that acts as an entry point for the command-line application. You can register and manage your custom commands in the `src/console.php` file.
+
+### Auto-Loading Commands
+
+Neutron also supports automatic loading of commands from the `src/Command/` directory. This allows you to define commands without manually registering them in the `src/console.php` file.
+
+To take advantage of this, simply add your command classes to the `src/Command/` directory, and they will be automatically loaded and registered by the framework.
+
+### Registering a Command
+
+To add a new command to your application, follow these steps:
+
+1. **Create a Command Class**: Define a new command class in the `src/Command/` directory by extending `Symfony\Component\Console\Command\Command`.
+
+   #### Example Command:
+
+   ```php
+   <?php
+   namespace Neutron\Command;
+
+   use Symfony\Component\Console\Command\Command;
+   use Symfony\Component\Console\Input\InputInterface;
+   use Symfony\Component\Console\Output\OutputInterface;
+
+   class HelloCommand extends Command
+   {
+       protected static $defaultName = 'hello';
+
+       protected function configure(): void
+       {
+           // Set the command name and description
+           $this->setName(self::$defaultName)
+                ->setDescription('Hello Command')
+                ->setHelp('This command prints "Hello, World".');
+       }
+
+       protected function execute(InputInterface $input, OutputInterface $output): int
+       {
+           $output->writeln('Hello, World.');
+
+           return Command::SUCCESS;
+       }
+   }
+   ```
+
+2. **(Optional) Register the Command**: Open the `src/console.php` file and register the command:
+
+   ```php
+   <?php
+
+   use Neutron\Command\HelloCommand;
+
+   // Register the HelloCommand
+   $application->add(new HelloCommand());
+   ```
+
+### Running Commands
+
+Once the commands are defined and registered, you can run them using the `console.php` file in your project root:
+
+```bash
+php neutron hello
+```
+
+This will execute the `HelloCommand` and print the message `"Hello, World."`.
+
+### Using Input Arguments and Options
+
+Symfony Console also supports input arguments and options for more flexible commands.
+
+#### Example with Arguments:
+
+```php
+protected function configure(): void
+{
+    $this
+        ->setName('greet')
+        ->setDescription('Greets a person')
+        ->addArgument('name', InputArgument::REQUIRED, 'The name of the person.')
+        ->setHelp('This command allows you to greet someone.');
+}
+
+protected function execute(InputInterface $input, OutputInterface $output): int
+{
+    $name = $input->getArgument('name');
+    $output->writeln('Hello, ' . $name);
+
+    return Command::SUCCESS;
+}
+```
+
+You can now run the command with an argument:
+
+```bash
+php neutron greet Mikey
 ```
 
 ### Debugging
