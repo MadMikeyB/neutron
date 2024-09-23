@@ -1,4 +1,8 @@
 {
+    "name": "madmikeyb/neutron",
+    "description": "Neutron PHP Framework",
+    "type": "project",
+    "license": "BSD-2-Clause",
     "require": {
         "vlucas/phpdotenv": "^5.4",
         "symfony/var-dumper": "^5.0",
@@ -19,5 +23,10 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^11.3"
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "php -r \"copy('.env.example', '.env');\""
+        ]
     }
 }
