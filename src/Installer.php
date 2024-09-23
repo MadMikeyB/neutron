@@ -18,6 +18,12 @@ class Installer
             echo "Logs directory has been created.\n";
         }
 
+        // Ensure database directory exists
+        if (!file_exists(__DIR__ . '/../database')) {
+            mkdir(__DIR__ . '/../database', 0755, true);
+            echo "Database directory has been created.\n";
+        }
+
         // Create the SQLite database file if using SQLite
         $env = parse_ini_file(__DIR__ . '/../.env');
         if (isset($env['DB_CONNECTION']) && $env['DB_CONNECTION'] === 'sqlite') {
