@@ -2,6 +2,7 @@
     "name": "madmikeyb/neutron",
     "description": "Neutron PHP Framework",
     "type": "project",
+    "minimum-stability": "dev",
     "license": "BSD-2-Clause",
     "require": {
         "vlucas/phpdotenv": "^5.4",
