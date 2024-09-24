@@ -25,6 +25,9 @@ class QueueWorkerCommand extends Command
             $job = $queue->pop();
 
             if ($job !== null) {
+                // Output the processing message
+                $output->writeln(sprintf('[Processing Job: %s]', get_class($job)));
+
                 // Process the job
                 $job->handle();
             } else {
